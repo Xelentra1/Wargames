@@ -1,1 +1,1 @@
-"# My wargames notes" 
+My wargames notes
