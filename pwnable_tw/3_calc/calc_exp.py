@@ -2,6 +2,11 @@
 
 from pwn import *
 
+# logic bug in eval func
+# +x  to leak value at offset x
+# +x+y  to add y to value at offset x
+# +x-y  to sub y from value at offset x
+
 #nc chall.pwnable.tw 10100
 s = remote('chall.pwnable.tw', 10100)
 #s = process('./calc')
